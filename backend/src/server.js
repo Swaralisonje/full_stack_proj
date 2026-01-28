@@ -1,28 +1,35 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import userRoutes from "./routes/userRoutes.js"; // ✅ IMPORT ROUTES
 
 dotenv.config();
 
 const app = express();
+
+// Middleware
 app.use(express.json());
 
-// ✅ ADD THIS
+// ✅ Root route (fixes "Cannot GET /")
 app.get("/", (req, res) => {
   res.send("Backend API is running successfully 🚀");
 });
 
-// your routes
+// ✅ User APIs
 app.use("/api/users", userRoutes);
 
-mongoose.connect(process.env.MONGO_URI)
+// ✅ MongoDB connection
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
-  .catch(err => {
-    console.error(err);
+  .catch((err) => {
+    console.error("MongoDB connection error:", err.message);
     process.exit(1);
   });
 
+// ✅ Render-required PORT handling
 const PORT = process.env.PORT || 10000;
+
 app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
